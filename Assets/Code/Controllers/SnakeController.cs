@@ -8,7 +8,7 @@ public class SnakeController : BaseController
     private readonly IReadOnlySubscriptionProperty<float> _rightMove;
     private readonly IReadOnlySubscriptionProperty<float> _upMove;
     private readonly IReadOnlySubscriptionProperty<float> _downMove;
-    private readonly SubscriptionProperty<float> _diff;
+    private readonly SubscriptionProperty<float> direction;
 
     public SnakeController(IReadOnlySubscriptionProperty<float> leftMove,
                                 IReadOnlySubscriptionProperty<float> rightMove,
@@ -17,8 +17,8 @@ public class SnakeController : BaseController
                                   Transform placeForUI)
     {
         _snakeView = LoadView(placeForUI);
-        _diff = new SubscriptionProperty<float>();
-        _snakeView.Init(_diff);
+        direction = new SubscriptionProperty<float>();
+        _snakeView.Init(direction);
 
         _leftMove = leftMove;
         _rightMove = rightMove;
@@ -47,7 +47,7 @@ public class SnakeController : BaseController
 
     private void Move(float value)
     {
-        _diff.Value = value;
+        direction.Value = value;
     }
 
     protected override void OnChildDispose()

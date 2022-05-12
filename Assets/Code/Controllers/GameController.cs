@@ -1,7 +1,5 @@
 using Snake.Model;
 using Snake.Tools;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameController : BaseController

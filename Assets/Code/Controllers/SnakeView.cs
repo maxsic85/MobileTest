@@ -15,7 +15,7 @@ public class SnakeView : MonoBehaviour
     private float _rightBorder = 10;
 
     [SerializeField]
-    private float _relativeSpeedRate = 10;
+    private float _relativeSpeedRate = 0.2f;
 
     private Vector2 _direction = Vector2.left;
     private Vector3 _offset = Vector3.zero;
@@ -27,52 +27,21 @@ public class SnakeView : MonoBehaviour
 
         tail = new List<Transform>();
         direc = new SubscriptionProperty<Vector2>();
-        direc.SubscribeOnChange(CalcOfset);
         _diff = diff;
         _diff.SubscribeOnChange(Move);
         old = transform.position;
-        InvokeRepeating("StartMoving",0, 0.1f);
+         InvokeRepeating("StartMoving", 0f, 0.2f);
         InvokeRepeating("Grow", 0.1f, 2);
 
     }
+
     private void StartMoving()
     {
 
+        old = transform.position;
         transform.SetAsLastSibling();
-        CalcOfset(_direction);
-        transform.Translate(_direction * _relativeSpeedRate);
-
-
-    }
-
-    private void CalcOfset(Vector2 direction)
-    {
-        if (direction == Vector2.left)
-        {
-            _offset.x = 40;
-            _offset.y = 0;
-        }
-        else if (direction == Vector2.up)
-        {
-            _offset.x = 0;
-            _offset.y = -40;
-        }
-        else if (direction == Vector2.right)
-        {
-            _offset.x = -40;
-            _offset.y = 0;
-        }
-        else if (direction == Vector2.down)
-        {
-            _offset.x = 0;
-            _offset.y = 40;
-        }
-
-        if (Vector3.Distance(old, transform.position) >= 40)
-        {
-            old = transform.position;
-            TailMove(old);
-        }
+        transform.Translate(_direction * 1500 * Time.fixedDeltaTime);
+        TailMove(old);
     }
 
     private void Grow()
@@ -80,7 +49,9 @@ public class SnakeView : MonoBehaviour
 
         var _viewPath = new ResourcePath { PathResource = "Prefabs/snakeTail" };
         var objView = (GameObject)Instantiate(ResourceLoader.LoadPrefab(_viewPath), old, Quaternion.identity);
+        objView.transform.SetAsFirstSibling();
         objView.transform.SetParent(transform.parent);
+        objView.transform.position = old;
         tail.Insert(0, objView.transform);
     }
 
@@ -97,8 +68,9 @@ public class SnakeView : MonoBehaviour
 
     private void Move(float value)
     {
-        SetDirection(value);
-
+       
+            SetDirection(value);
+       
     }
 
     private void SetDirection(float value)
@@ -147,7 +119,5 @@ public class SnakeView : MonoBehaviour
                 _direction = Vector2.right;
             }
         }
-
-
     }
 }
