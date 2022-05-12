@@ -13,7 +13,7 @@ public class InputController : BaseController
                       GameSnake snake)
     {
         _view = LoadView();
-        _view.Init(leftMove,rightMove, snake.Speed);
+        _view.Init(leftMove,rightMove);
     }
 
     private BaseInputView LoadView()
@@ -22,6 +22,10 @@ public class InputController : BaseController
         AddGameObjects(objView);
 
         return objView.GetComponent<BaseInputView>();
+    }
+    protected override void OnChildDispose()
+    {
+        base.OnChildDispose();
     }
 }
 

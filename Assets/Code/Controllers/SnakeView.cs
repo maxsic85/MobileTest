@@ -3,74 +3,91 @@ using Snake.Tools;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
+using System;
+using JoostenProductions;
 
 public class SnakeView : MonoBehaviour
 {
-    private IReadOnlySubscriptionProperty<float> _diff;
-    private IReadOnlySubscriptionProperty<Vector2> direc;
-    [SerializeField]
-    private float _leftBorder = 10;
+    public Action ActionSnakeIfFull;
+    private IReadOnlySubscriptionProperty<float> _directionFromInput;
+    public SubscriptionProperty<bool> _isGrow;
 
-    [SerializeField]
-    private float _rightBorder = 10;
 
-    [SerializeField]
-    private float _relativeSpeedRate = 0.2f;
 
     private Vector2 _direction = Vector2.left;
     private Vector3 _offset = Vector3.zero;
-    private List<Transform> tail;
+    private List<Transform> _tail;
     private Vector3 old = Vector3.zero;
+    [SerializeField] private int _maxSnakeCountByLevel;
 
-    public void Init(IReadOnlySubscriptionProperty<float> diff)
+    public int TailCount => _tail.Count;
+    public void Init(IReadOnlySubscriptionProperty<float> directionFromInput, GameData gameData)
     {
-
-        tail = new List<Transform>();
-        direc = new SubscriptionProperty<Vector2>();
-        _diff = diff;
-        _diff.SubscribeOnChange(Move);
+        var updateManager = FindObjectOfType<UpdateManager>();
+        if (updateManager != null) DontDestroyOnLoad(updateManager.gameObject);
+        _maxSnakeCountByLevel = gameData.CurrentLevel.CountTail;
+        _tail = new List<Transform>();
+        _directionFromInput = directionFromInput;
+        _directionFromInput.SubscribeOnChange(Move);
+        _isGrow = new SubscriptionProperty<bool>();
+        _isGrow.Value = false;
+        _isGrow.SubscribeOnChange(Grow);
         old = transform.position;
-         InvokeRepeating("StartMoving", 0f, 0.2f);
-        InvokeRepeating("Grow", 0.1f, 2);
-
+        InvokeRepeating("StartMoving", 0f, gameData.CurrentLevel.LevelStepTime);
+        Grow(true);
     }
 
     private void StartMoving()
     {
-
         old = transform.position;
         transform.SetAsLastSibling();
-        transform.Translate(_direction * 1500 * Time.fixedDeltaTime);
+        transform.Translate(_direction * (50 * gameObject.GetComponent<RectTransform>().rect.width) * Time.fixedDeltaTime);
         TailMove(old);
     }
 
-    private void Grow()
+    private void Grow(bool isGrow)
     {
+        if (TailCount < _maxSnakeCountByLevel)
+        {
+            var _viewPath = new ResourcePath { PathResource = "Prefabs/snakeTail" };
+            var objView = (GameObject)Instantiate(ResourceLoader.LoadPrefab(_viewPath), old, Quaternion.identity);
+            objView.transform.SetAsFirstSibling();
+            objView.transform.SetParent(transform.parent);
+        }
+        else
+        {
+            ActionSnakeIfFull?.Invoke();
+        }
+    }
 
-        var _viewPath = new ResourcePath { PathResource = "Prefabs/snakeTail" };
-        var objView = (GameObject)Instantiate(ResourceLoader.LoadPrefab(_viewPath), old, Quaternion.identity);
-        objView.transform.SetAsFirstSibling();
-        objView.transform.SetParent(transform.parent);
+    private void Eating(GameObject objView)
+    {
         objView.transform.position = old;
-        tail.Insert(0, objView.transform);
+        _tail.Insert(0, objView.transform);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        _isGrow.Value = true;
+        Eating(collision.gameObject);
+        return;
+
     }
 
     private void TailMove(Vector3 vector)
     {
-        if (tail.Count > 0)
+        if (_tail.Count > 0)
         {
 
-            tail.Last().position = vector + _offset;
-            tail.Insert(0, tail.Last());
-            tail.RemoveAt(tail.Count - 1);
+            _tail.Last().position = vector + _offset;
+            _tail.Insert(0, _tail.Last());
+            _tail.RemoveAt(_tail.Count - 1);
         }
     }
 
     private void Move(float value)
     {
-       
-            SetDirection(value);
-       
+        SetDirection(value);
     }
 
     private void SetDirection(float value)
@@ -119,5 +136,12 @@ public class SnakeView : MonoBehaviour
                 _direction = Vector2.right;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        _isGrow.UnSubscribeOnChange(Grow);
+        _directionFromInput.UnSubscribeOnChange(Move);
+        StopAllCoroutines();
     }
 }

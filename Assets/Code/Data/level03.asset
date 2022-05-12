@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82434e6c560d6fe4785d8009697b37b1, type: 3}
-  m_Name: level01
+  m_Name: level03
   m_EditorClassIdentifier: 
-  level: 1
-  countTail: 2
-  levelStepTime: 0.2
+  level: 0
+  countTail: 0
+  levelStepTime: 0

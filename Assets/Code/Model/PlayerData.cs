@@ -6,10 +6,9 @@ namespace Snake.Model
 {
     public class PlayerData : MonoBehaviour
     {
-        public PlayerData(float speedSnake, IAnalyticTools analyticTools)
+        public PlayerData( IAnalyticTools analyticTools)
         {
             CurrentState = new SubscriptionProperty<GameState>();
-            CurrentSnake = new GameSnake(speedSnake);
             AnalyticTools = analyticTools;
         }
 

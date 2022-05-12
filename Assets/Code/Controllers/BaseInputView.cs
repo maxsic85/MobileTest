@@ -10,13 +10,10 @@ public abstract class BaseInputView:MonoBehaviour
     protected float _speed;
 
     public virtual void Init(SubscriptionProperty<float> leftMove,
-                      SubscriptionProperty<float> rightMove,
-                      float speed)
+                      SubscriptionProperty<float> rightMove)
     {
         _leftMove = leftMove;
         _rightMove = rightMove;
-
-        _speed = speed;
     }
 
     protected void OnLeftMove(float value)
@@ -27,4 +24,6 @@ public abstract class BaseInputView:MonoBehaviour
     {
         _rightMove.Value = value;
     }
+
+    
 }

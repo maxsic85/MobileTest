@@ -9,11 +9,15 @@ public class MainController : BaseController
     private readonly Transform _placeForUi;
     private readonly PlayerData _profilePlayer;
     private readonly IAdsShower _adsShower;
-    public MainController(Transform placeForUi, PlayerData profilePlayer, IAdsShower adsShower)
+    private readonly GameData _gameData;
+
+    public MainController(Transform placeForUi, PlayerData profilePlayer, IAdsShower adsShower, GameData gameData)
     {
         _placeForUi = placeForUi;
         _profilePlayer = profilePlayer;
         _adsShower = adsShower;
+        _gameData = gameData;
+
         OnChangeGameState(_profilePlayer.CurrentState.Value);
         _profilePlayer.CurrentState.SubscribeOnChange(OnChangeGameState);
     }
@@ -35,7 +39,7 @@ public class MainController : BaseController
                 _gameController?.Dispose();
                 break;
             case GameState.GAME:
-                _gameController = new GameController(_profilePlayer,_placeForUi);
+                _gameController = new GameController(_profilePlayer,_placeForUi,_gameData);
                 _mainMenuController?.Dispose();
                 break;
             default:

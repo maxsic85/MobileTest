@@ -2,11 +2,11 @@
 {
     public class GameSnake
     {
-        public float Speed { get; }
+        public float Lenght { get; set; }
 
         public GameSnake(float speed)
         {
-            Speed = speed;
+            Lenght = speed;
         }
 
     }

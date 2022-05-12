@@ -10,18 +10,22 @@ public class SwipeInputView : BaseInputView
 
 
     public override void Init(SubscriptionProperty<float> leftMove,
-                                SubscriptionProperty<float> rightMove,
-                                  float speed)
+                                SubscriptionProperty<float> rightMove
+                                  )
     {
-        base.Init(leftMove, rightMove, _speed);
+        base.Init(leftMove, rightMove);
         UpdateManager.SubscribeToUpdate(OnUpdate);
+     
         _speed = 0;
     }
 
     private void OnDestroy()
     {
-        UpdateManager.UnsubscribeFromUpdate(OnUpdate);
+       UpdateManager.UnsubscribeFromUpdate(OnUpdate);
+        
     }
+
+ 
     private void OnUpdate()
     {
 

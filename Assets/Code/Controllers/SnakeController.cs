@@ -1,5 +1,7 @@
 ﻿using Snake.Tools;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 public class SnakeController : BaseController
 {
     private readonly ResourcePath _path = new ResourcePath { PathResource = "Prefabs/Snake" };
@@ -8,28 +10,30 @@ public class SnakeController : BaseController
     private readonly IReadOnlySubscriptionProperty<float> _rightMove;
     private readonly IReadOnlySubscriptionProperty<float> _upMove;
     private readonly IReadOnlySubscriptionProperty<float> _downMove;
+    private  GameData _gameData;
     private readonly SubscriptionProperty<float> direction;
 
     public SnakeController(IReadOnlySubscriptionProperty<float> leftMove,
                                 IReadOnlySubscriptionProperty<float> rightMove,
                                  IReadOnlySubscriptionProperty<float> upMove,
                                   IReadOnlySubscriptionProperty<float> downMove,
-                                  Transform placeForUI)
+                                  Transform placeForUI,
+                                  GameData gameData )
     {
         _snakeView = LoadView(placeForUI);
         direction = new SubscriptionProperty<float>();
-        _snakeView.Init(direction);
+        _snakeView.Init(direction, gameData);
 
         _leftMove = leftMove;
         _rightMove = rightMove;
         _upMove = upMove;
         _downMove = downMove;
-
+        _gameData = gameData;
         _leftMove.SubscribeOnChange(Move);
         _rightMove.SubscribeOnChange(Move);
         _upMove.SubscribeOnChange(Move);
         _downMove.SubscribeOnChange(Move);
-
+        _snakeView.ActionSnakeIfFull += Restart;
     }
 
     public SnakeView LoadView(Transform placeForUI)
@@ -49,6 +53,15 @@ public class SnakeController : BaseController
     {
         direction.Value = value;
     }
+
+
+    public void Restart()
+    {
+        _gameData.CurrentLevelIndex++;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+    }
+
 
     protected override void OnChildDispose()
     {
