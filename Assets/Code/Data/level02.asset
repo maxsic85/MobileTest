@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: level02
   m_EditorClassIdentifier: 
   level: 2
-  countTail: 15
-  levelStepTime: 0.1
+  countTail: 3
+  levelStepTime: 0.15

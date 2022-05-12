@@ -15,5 +15,6 @@ MonoBehaviour:
   levels:
   - {fileID: 11400000, guid: fb102b43e5b63c24589e59380ec1d95b, type: 2}
   - {fileID: 11400000, guid: 2ce713cf5f555064580400fa2bffb28b, type: 2}
+  - {fileID: 11400000, guid: d0d9f3eb7fa9b11408c42a3be5d30531, type: 2}
   lives: 3
   currentLevel: 1
