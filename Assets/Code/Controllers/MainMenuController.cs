@@ -15,7 +15,7 @@ public class MainMenuController:BaseController
         _profilePlayer = profilePlayer;
         _adsShower = adsShower;
         _view = LoadView(placeForUi);
-        _view.Init(Start);
+        _view.Init(Start, EnterToShop);
     }
 
     private void Start()
@@ -24,6 +24,11 @@ public class MainMenuController:BaseController
         _adsShower.ShowInterstitial();
         _profilePlayer.AnalyticTools.SendMessage("start_game");
     }
+    private void EnterToShop()
+    {
+        _profilePlayer.CurrentState.Value = GameState.SHOP;
+    }
+
     private MainMenuView LoadView(Transform placeForUi)
     {
         var mainMenuView = Object.Instantiate(ResourceLoader.LoadPrefab(_viewPath),placeForUi);

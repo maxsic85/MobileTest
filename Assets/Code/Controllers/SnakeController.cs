@@ -12,6 +12,8 @@ public class SnakeController : BaseController
     private readonly IReadOnlySubscriptionProperty<float> _downMove;
     private  GameData _gameData;
     private readonly SubscriptionProperty<float> direction;
+    private readonly IReadOnlySubscriptionAction _IslevelUp;
+
 
     public SnakeController(IReadOnlySubscriptionProperty<float> leftMove,
                                 IReadOnlySubscriptionProperty<float> rightMove,
@@ -20,9 +22,11 @@ public class SnakeController : BaseController
                                   Transform placeForUI,
                                   GameData gameData )
     {
+        _IslevelUp = new SubscriptionAction();
+        _IslevelUp.SubscribeOnChange(NextLevel);
         _snakeView = LoadView(placeForUI);
         direction = new SubscriptionProperty<float>();
-        _snakeView.Init(direction, gameData);
+        _snakeView.Init(direction,_IslevelUp, gameData);
 
         _leftMove = leftMove;
         _rightMove = rightMove;
@@ -33,11 +37,12 @@ public class SnakeController : BaseController
         _rightMove.SubscribeOnChange(Move);
         _upMove.SubscribeOnChange(Move);
         _downMove.SubscribeOnChange(Move);
-        _snakeView.ActionSnakeIfFull += Restart;
+     //   _snakeView.ActionSnakeIfFull += Restart;
     }
 
     public SnakeView LoadView(Transform placeForUI)
     {
+       
         var snakeView = Object.Instantiate(ResourceLoader.LoadPrefab(_path),placeForUI);
         AddGameObjects(snakeView);
         snakeView.TryGetComponent(out SnakeView view);
@@ -55,7 +60,7 @@ public class SnakeController : BaseController
     }
 
 
-    public void Restart()
+    public void NextLevel()
     {
         _gameData.CurrentLevelIndex++;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -69,6 +74,7 @@ public class SnakeController : BaseController
         _rightMove.UnSubscribeOnChange(Move);
         _upMove.UnSubscribeOnChange(Move);
         _downMove.UnSubscribeOnChange(Move);
+        _IslevelUp.UnSubscribeOnChange(NextLevel);
         base.OnChildDispose();
     }
 }

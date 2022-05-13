@@ -45,6 +45,7 @@ public class MainController : BaseController
             case GameState.SHOP:
                 var inventoryModel = new InventoryModel();
                 _inventoryController = new InventoryController(inventoryModel,_itemConfig);
+                _inventoryController.ShowInventory();
                 break;
             case GameState.GAME:
                 _gameController = new GameController(_profilePlayer,_placeForUi,_gameData);

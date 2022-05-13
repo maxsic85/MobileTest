@@ -8,8 +8,8 @@ using JoostenProductions;
 
 public class SnakeView : MonoBehaviour
 {
-    public Action ActionSnakeIfFull;
     private IReadOnlySubscriptionProperty<float> _directionFromInput;
+    private SubscriptionAction _isLevelUp;
     public SubscriptionProperty<bool> _isGrow;
 
 
@@ -21,8 +21,10 @@ public class SnakeView : MonoBehaviour
     [SerializeField] private int _maxSnakeCountByLevel;
 
     public int TailCount => _tail.Count;
-    public void Init(IReadOnlySubscriptionProperty<float> directionFromInput, GameData gameData)
+    public void Init(IReadOnlySubscriptionProperty<float> directionFromInput, IReadOnlySubscriptionAction isLevelUp, GameData gameData)
     {
+        _isLevelUp = isLevelUp as SubscriptionAction;
+
         var updateManager = FindObjectOfType<UpdateManager>();
         if (updateManager != null) DontDestroyOnLoad(updateManager.gameObject);
         _maxSnakeCountByLevel = gameData.CurrentLevel.CountTail;
@@ -56,7 +58,8 @@ public class SnakeView : MonoBehaviour
         }
         else
         {
-            ActionSnakeIfFull?.Invoke();
+            _isLevelUp?.Invoke();
+           
         }
     }
 
