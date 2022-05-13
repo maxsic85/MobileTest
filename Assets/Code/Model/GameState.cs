@@ -2,8 +2,9 @@
 {
     public enum GameState
     {
-        NONE=0,
-        START=1,
-        GAME=2
+        NONE = 0,
+        START = 1,
+        GAME = 2,
+        SHOP = 3
     }
 }
